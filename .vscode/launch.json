@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "STM32 Debug (OpenOCD)",
+            "cwd": "${workspaceFolder}",
+            "executable": "${workspaceFolder}/build/Debug/car.elf", // replace with your ELF file path
+            "request": "launch",
+            "type": "cortex-debug",
+            "runToEntryPoint": "main",
+            "servertype": "openocd",
+            "device": "STM32F103C8", // replace with your MCU model
+            "interface": "swd", // debug interface
+            "configFiles": [
+                "/usr/share/openocd/scripts/interface/stlink.cfg", // STLink interface configuration
+                "/usr/share/openocd/scripts/target/stm32f1x.cfg" // MCU target configuration
+            ],
+            "svdFile": "STM32F103.svd", // optional: for peripheral check
+            "liveWatch": {
+                "enabled": true,
+                "samplesPerSecond": 4
+            },
+            // "showDevDebugOutput": "raw",
+            // "showDevDebugTimestamps": true,
+        }
+    ]
+}
