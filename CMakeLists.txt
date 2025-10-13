@@ -48,7 +48,6 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     "Core/Src/state.c"
     "Core/Src/comm.c"
-    "Core/Src/cfg.c"
     "Core/Src/err.c"
     "Core/Src/IRQHandler.c"
 

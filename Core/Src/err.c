@@ -1,7 +1,7 @@
 #include "usr.h"
 
 #define Err_LED_PORT GPIOC
-#define Err_LED_PIN GPIO_PIN_13
+#define Err_LED_PIN GPIO_ODR_ODR13
 
 #define REFRESH_PERIOD_ms 10
 #define BRIGHTNESS_LEVEL 10
@@ -13,7 +13,7 @@ void Err(unsigned char breath_period)
 
     if (!breath_period)
     {
-        Err_LED_PORT->ODR ^= GPIO_PIN_13;
+        Err_LED_PORT->ODR ^= Err_LED_PIN;
 
         repetition = brightness_level = refresh_cnt = 0;
         descend = false;
@@ -38,7 +38,7 @@ void Err(unsigned char breath_period)
             }
         }
 
-        refresh_cnt < brightness_level ? (Err_LED_PORT->ODR |= GPIO_PIN_13)
-                                       : (Err_LED_PORT->ODR &= ~GPIO_PIN_13);
+        refresh_cnt < brightness_level ? (Err_LED_PORT->ODR |= Err_LED_PIN)
+                                       : (Err_LED_PORT->ODR &= ~Err_LED_PIN);
     }
 }

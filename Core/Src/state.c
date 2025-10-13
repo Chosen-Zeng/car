@@ -24,10 +24,10 @@ void State_Chassis(void)
         volatile unsigned *const channel;
         float spd_pct;
     } wheel[4] = {
-        [WHEEL_LF_arrID] = {.port_N = GPIOB, .port_P = GPIOB, .pin_N = GPIO_PIN_5, .pin_P = GPIO_PIN_4, .channel = &TIM_CHASSIS->CCR1},
-        [WHEEL_LR_arrID] = {.port_N = GPIOB, .port_P = GPIOA, .pin_N = GPIO_PIN_3, .pin_P = GPIO_PIN_15, .channel = &TIM_CHASSIS->CCR2},
-        [WHEEL_RF_arrID] = {.port_N = GPIOA, .port_P = GPIOA, .pin_N = GPIO_PIN_12, .pin_P = GPIO_PIN_11, .channel = &TIM_CHASSIS->CCR3},
-        [WHEEL_RR_arrID] = {.port_N = GPIOA, .port_P = GPIOB, .pin_N = GPIO_PIN_8, .pin_P = GPIO_PIN_15, .channel = &TIM_CHASSIS->CCR4},
+        [WHEEL_LF_arrID] = {.port_N = GPIOB, .port_P = GPIOB, .pin_N = GPIO_ODR_ODR5, .pin_P = GPIO_ODR_ODR4, .channel = &TIM_CHASSIS->CCR1},
+        [WHEEL_LR_arrID] = {.port_N = GPIOB, .port_P = GPIOA, .pin_N = GPIO_ODR_ODR3, .pin_P = GPIO_ODR_ODR15, .channel = &TIM_CHASSIS->CCR2},
+        [WHEEL_RF_arrID] = {.port_N = GPIOA, .port_P = GPIOA, .pin_N = GPIO_ODR_ODR12, .pin_P = GPIO_ODR_ODR11, .channel = &TIM_CHASSIS->CCR3},
+        [WHEEL_RR_arrID] = {.port_N = GPIOA, .port_P = GPIOB, .pin_N = GPIO_ODR_ODR8, .pin_P = GPIO_ODR_ODR15, .channel = &TIM_CHASSIS->CCR4},
     };
 
     static struct spd_t

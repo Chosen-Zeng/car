@@ -39,10 +39,6 @@ struct state_W_t
 };
 extern struct state_W_t state_W;
 
-// call in main.c
-void PeriphInit(void);
-void Scheduler(void);
-
 // declare task function
 void State_Chassis(void);
 void State_RoboticArm(void);

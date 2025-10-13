@@ -1,14 +1,9 @@
 #include "usr.h"
 
-void TIM1_UP_IRQHandler(void)
+void SysTick_Handler(void)
 {
-    if (TIM1->SR & TIM_SR_UIF)
-    {
-        TIM1->SR &= ~TIM_SR_UIF;
-
-        ++task_cnt_ms_State;
-        ++task_cnt_ms_Err;
-    }
+    ++task_cnt_ms_State;
+    ++task_cnt_ms_Err;
 }
 
 void DMA1_Channel5_IRQHandler(void)
