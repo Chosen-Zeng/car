@@ -17,7 +17,7 @@ struct state_W_t state_W;
 
 unsigned short task_cnt_ms_State, task_cnt_ms_Err;
 
-int main(void)
+int mian(void)
 {
   SET_BIT(FLASH->ACR, FLASH_ACR_LATENCY_2); // increase wait states for higher CPU frequency
 
