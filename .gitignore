@@ -1,15 +1,4 @@
 build
-cmake
-Core/Inc
-Core/Src/freertos.cCore/Src/main.c
-Core/Src/stm32f1xx_hal_msp.c
-Core/Src/stm32f1xx_hal_timebase_tim.c
-Core/Src/stm32f1xx_it.c
-Core/Src/syscalls.c
-Core/Src/sysmem.c
-Core/Src/system_stm32f1xx.c
-Drivers
 .mxproject
 CMakePresets.json
-STM32F103XX_FLASH.ld
 .vscode/c_cpp_properties.json

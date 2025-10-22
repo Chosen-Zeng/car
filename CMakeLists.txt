@@ -35,9 +35,6 @@ enable_language(C ASM)
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
 
-# Add STM32CubeMX generated sources
-add_subdirectory(cmake/stm32cubemx)
-
 # Link directories setup
 target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined library search paths
@@ -46,32 +43,46 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    "Core/Src/state.c"
-    "Core/Src/comm.c"
-    "Core/Src/err.c"
-    "Core/Src/IRQHandler.c"
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/main.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/sysmem.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/syscalls.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/system_stm32f1xx.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/startup_stm32f103xb.s
 
-    "~/Desktop/lib/algorithm/fltr.c"
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/state.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/comm.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/err.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/IRQHandler.c
+
+    ~/Desktop/lib/algorithm/fltr.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
-    "Core"
-    "~/Desktop/lib/hw"
-    "~/Desktop/lib/STM32"
-    "~/Desktop/lib/algorithm"
-    "~/Desktop/software_engineering/CMSIS-DSP/1.16.2/Include"
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Include
+
+    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
+
+    ~/Desktop/lib/hw
+    ~/Desktop/lib/STM32
+    ~/Desktop/lib/algorithm
+
+    ~/Desktop/CMSIS-DSP/1.16.2/Include
 )
 
 # Add project symbols (macros)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
+    STM32F103xB
 )
 
 # Add linked libraries
 target_link_libraries(${CMAKE_PROJECT_NAME}
-    stm32cubemx
-
     # Add user defined libraries
+    m
 )
+
+# Add the map file to the list of files to be removed with 'clean' target
+set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES ADDITIONAL_CLEAN_FILES ${CMAKE_PROJECT_NAME}.map)

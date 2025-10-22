@@ -2,7 +2,7 @@
 #define __USER_H
 
 #include <stdbool.h>
-#include <math.h>
+
 #include "stm32f1xx.h"
 
 #include "algorithm.h"
