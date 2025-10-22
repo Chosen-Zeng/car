@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 3.22)
 #
 
 # Setup compiler settings
-set(CMAKE_C_STANDARD 11)
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
@@ -21,7 +21,6 @@ endif()
 # Set the project name
 set(CMAKE_PROJECT_NAME car)
 
-
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 
@@ -31,6 +30,18 @@ message("Build type: " ${CMAKE_BUILD_TYPE})
 
 # Enable CMake support for ASM and C languages
 enable_language(C ASM)
+
+add_library(lib)
+
+target_sources(lib PRIVATE
+    ~/Desktop/lib/algorithm/fltr.c
+)
+
+target_include_directories(lib PUBLIC
+    ~/Desktop/lib/hw
+    ~/Desktop/lib/STM32
+    ~/Desktop/lib/algorithm
+)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
@@ -53,8 +64,6 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/comm.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/err.c
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/IRQHandler.c
-
-    ~/Desktop/lib/algorithm/fltr.c
 )
 
 # Add include paths
@@ -62,14 +71,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Include
-
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
-
-    ~/Desktop/lib/hw
-    ~/Desktop/lib/STM32
-    ~/Desktop/lib/algorithm
-
-    ~/Desktop/CMSIS-DSP/1.16.2/Include
 )
 
 # Add project symbols (macros)
@@ -82,6 +84,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 target_link_libraries(${CMAKE_PROJECT_NAME}
     # Add user defined libraries
     m
+    lib
 )
 
 # Add the map file to the list of files to be removed with 'clean' target
