@@ -94,12 +94,27 @@ LoopFillZerobss:
   cmp r2, r4
   bcc FillZerobss
 
-/* Call static constructors */
-    bl __libc_init_array
 /* Call the application's entry point.*/
   bl mian
   bx lr
 .size Reset_Handler, .-Reset_Handler
+
+@ bit operation
+
+.global BitSet
+.global BitReset
+
+BitSet:
+  LDR r2, [r0]
+  ORR r2, r2, r1
+  STR r2, [r0]
+  MOV pc, lr
+
+BitReset:
+  LDR r2, [r0]
+  BIC r2, r2, r1
+  STR r2, [r0]
+  MOV pc, lr
 
 /**
  * @brief  This is the code that gets called when the processor receives an

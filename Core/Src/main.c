@@ -19,32 +19,32 @@ unsigned short task_cnt_ms_State, task_cnt_ms_Err;
 
 int mian(void)
 {
-  SET_BIT(FLASH->ACR, FLASH_ACR_LATENCY_2); // increase wait states for higher CPU frequency
+  BitSet(&FLASH->ACR, FLASH_ACR_LATENCY_2); // increase wait states for higher CPU frequency
 
   // clock control
   {
     // HSE
-    SET_BIT(RCC->CR, RCC_CR_HSEON);           // enable HSE
+    BitSet(&RCC->CR, RCC_CR_HSEON);           // enable HSE
     while (!READ_BIT(RCC->CR, RCC_CR_HSERDY)) // wait till HSE ready
       ;
 
     // PLL
-    SET_BIT(RCC->CFGR, RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL9); // configure main PLL clock source and multiplication factor
-    SET_BIT(RCC->CR, RCC_CR_PLLON);                          // enable main PLL
+    BitSet(&RCC->CFGR, RCC_CFGR_PLLSRC | RCC_CFGR_PLLMULL9); // configure main PLL clock source and multiplication factor
+    BitSet(&RCC->CR, RCC_CR_PLLON);                          // enable main PLL
     while (!READ_BIT(RCC->CR, RCC_CR_PLLRDY))                // wait till PLL ready
       ;
 
     // clock divider
-    SET_BIT(RCC->CFGR, RCC_CFGR_PPRE2_DIV1 | RCC_CFGR_PPRE1_DIV2 | RCC_CFGR_HPRE_DIV1);
+    BitSet(&RCC->CFGR, RCC_CFGR_PPRE2_DIV1 | RCC_CFGR_PPRE1_DIV2 | RCC_CFGR_HPRE_DIV1);
 
     // system clock source
-    SET_BIT(RCC->CFGR, RCC_CFGR_SW_PLL);
-    while ((READ_REG(RCC->CFGR) & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL)
+    BitSet(&RCC->CFGR, RCC_CFGR_SW_PLL);
+    while ((RCC->CFGR & RCC_CFGR_SWS) != RCC_CFGR_SWS_PLL)
       ;
     SystemCoreClockUpdate();
 
     // HSI
-    CLEAR_BIT(RCC->CR, RCC_CR_HSION);        // disable HSI
+    BitReset(&RCC->CR, RCC_CR_HSION);        // disable HSI
     while (READ_BIT(RCC->CR, RCC_CR_HSIRDY)) // wait till HSI disabled
       ;
   }
