@@ -1,6 +1,9 @@
 #ifndef __USER_H
 #define __USER_H
 
+extern void BitSet(unsigned *reg_addr, unsigned data);
+extern void BitReset(unsigned *reg_addr, unsigned data);
+
 #include <stdbool.h>
 #include <math.h>
 

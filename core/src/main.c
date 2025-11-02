@@ -56,8 +56,8 @@ int mian(void)
     // USART1 RX
     SET_BIT(DMA1_Channel5->CCR, DMA_CCR_MINC | DMA_CCR_CIRC | DMA_CCR_TCIE | DMA_CCR_EN);
     WRITE_REG(DMA1_Channel5->CNDTR, RxData_LEN);
-    WRITE_REG(DMA1_Channel5->CMAR, RxData);
-    WRITE_REG(DMA1_Channel5->CPAR, &USART1->DR);
+    WRITE_REG(DMA1_Channel5->CMAR, (unsigned)RxData);
+    WRITE_REG(DMA1_Channel5->CPAR, (unsigned)&USART1->DR);
   }
 
   // GPIO & AFIO

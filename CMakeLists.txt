@@ -33,30 +33,28 @@ add_executable(${CMAKE_PROJECT_NAME})
 # Add sources to executable
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/main.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/sysmem.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/syscalls.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/system_stm32f1xx.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/main.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/sysmem.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/syscalls.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/system_stm32f1xx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/startup_stm32f103xb.s
 
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/state.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/comm.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/err.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Src/IRQHandler.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/state.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/comm.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/err.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/IRQHandler.c
 )
 
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
-    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Device/ST/STM32F1xx/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Core/Inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/drv
+    ${CMAKE_CURRENT_SOURCE_DIR}/core/inc
 )
 
 # Add project symbols (macros)
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
-    STM32F103xB
 )
 
 # Add linked libraries
