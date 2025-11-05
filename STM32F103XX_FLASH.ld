@@ -115,10 +115,6 @@ SECTIONS
     *(.RamFunc*)       /* .RamFunc* sections */
 
     . = ALIGN(4);
-  } >RAM AT> FLASH
-
-  .tdata : ALIGN(4)
-  {
     _edata = .;        /* define a global symbol at data end */
     PROVIDE(__data_end = .);
   } >RAM AT> FLASH

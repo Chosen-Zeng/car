@@ -1,0 +1,5 @@
+CompileFlags: # Tweak the parse settings
+  Add:
+    - "--sysroot=/home/chosen/ATfE-21.1.1-Linux-x86_64/lib/clang-runtimes/arm-none-eabi"
+  BuiltinHeaders: QueryDriver
+  CompilationDatabase: ./build/Debug
