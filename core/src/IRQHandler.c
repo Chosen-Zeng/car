@@ -1,15 +1,12 @@
 #include "usr.h"
 
-void SysTick_Handler(void)
-{
+void SysTick_Handler(void) {
     ++task_cnt_ms_State;
     ++task_cnt_ms_Err;
 }
 
-void DMA1_Channel5_IRQHandler(void)
-{
-    if (DMA1->ISR & DMA_ISR_TCIF5)
-    {
+void DMA1_Channel5_IRQHandler(void) {
+    if (DMA1->ISR & DMA_ISR_TCIF5) {
         DMA1->IFCR |= DMA_IFCR_CTCIF5;
 
         obj.dist_cm_x = *(float *)RxData;

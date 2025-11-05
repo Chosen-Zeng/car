@@ -1,19 +1,12 @@
 cmake_minimum_required(VERSION 3.22)
 
-#
-# This file is generated only once,
-# and is not re-generated if converter is called multiple times.
-#
-# User is free to modify the file as much as necessary
-#
-
 # Setup compiler settings
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 set(CMAKE_C_EXTENSIONS ON)
 
 # Set the project name
-set(CMAKE_PROJECT_NAME car)
+set(CMAKE_PROJECT_NAME car LANGUAGES C ASM)
 
 # Enable compile command to ease indexing with e.g. clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
@@ -22,10 +15,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 project(${CMAKE_PROJECT_NAME})
 message("Build type: " ${CMAKE_BUILD_TYPE})
 
-# Enable CMake support for ASM and C languages
-enable_language(C ASM)
-
-include(cmake/lib.cmake)
+include(cmake/algorithm.cmake)
 
 # Create an executable object type
 add_executable(${CMAKE_PROJECT_NAME})
@@ -50,6 +40,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     ${CMAKE_CURRENT_SOURCE_DIR}/drv
     ${CMAKE_CURRENT_SOURCE_DIR}/core/inc
+    ~/Desktop/lib/STM32
 )
 
 # Add project symbols (macros)
@@ -61,7 +52,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
 target_link_libraries(${CMAKE_PROJECT_NAME}
     # Add user defined libraries
     m
-    lib
+    algorithm
 )
 
 # Add the map file to the list of files to be removed with 'clean' target

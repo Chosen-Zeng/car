@@ -1,5 +1,4 @@
 #include "usr.h"
 
-void Comm(void)
-{
+void Comm(void) {
 }
