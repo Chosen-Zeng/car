@@ -25,7 +25,6 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     ${CMAKE_CURRENT_SOURCE_DIR}/core/src/main.c
     ${CMAKE_CURRENT_SOURCE_DIR}/core/src/sysmem.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/core/src/syscalls.c
     ${CMAKE_CURRENT_SOURCE_DIR}/core/src/system_stm32f1xx.c
     ${CMAKE_CURRENT_SOURCE_DIR}/startup_stm32f103xb.s
 
