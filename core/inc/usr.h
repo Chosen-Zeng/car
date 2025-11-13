@@ -1,6 +1,9 @@
 #ifndef __USER_H
 #define __USER_H
 
+#define STM32F1
+#define STM32F103xB
+
 extern void BitSet(unsigned *addr, unsigned val);
 extern void BitReset(unsigned *addr, unsigned val);
 

@@ -55,7 +55,7 @@
   * @{
   */
 
-#include "stm32f1xx.h"
+#include "stm32f103xb.h"
 
 /**
   * @}
@@ -266,7 +266,7 @@ void SystemCoreClockUpdate (void)
        SystemCoreClock = (HSE_VALUE / prediv1factor) * pllmull; 
  #else
         /* HSE selected as PLL clock entry */
-        if ((RCC->CFGR & RCC_CFGR_PLLXTPRE) != (uint32_t)RESET)
+        if (RCC->CFGR & RCC_CFGR_PLLXTPRE)
         {/* HSE oscillator clock divided by 2 */
           SystemCoreClock = (HSE_VALUE >> 1U) * pllmull;
         }
