@@ -1,4 +1,9 @@
+#include "stm32f103xb.h"
 #include "usr.h"
+
+#include "TIM.h"
+#include "algorithm.h"
+#include <math.h>
 
 #define CAR_HEIGHT_cm 0
 

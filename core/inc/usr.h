@@ -1,20 +1,12 @@
 #ifndef __USER_H
 #define __USER_H
 
-extern void BitSet(unsigned *reg_addr, unsigned data);
-extern void BitReset(unsigned *reg_addr, unsigned data);
+extern void BitSet(unsigned *addr, unsigned val);
+extern void BitReset(unsigned *addr, unsigned val);
 
-#include <math.h>
-#include <stdbool.h>
-
-#include "stm32f1xx.h"
-
-#include "algorithm.h"
 #include "fltr.h"
 
 #define TIMsw TIM2
-#include "TIM.h"
-#include "USART.h"
 
 extern unsigned short task_intvl_ms_State;
 

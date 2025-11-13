@@ -1,5 +1,7 @@
 BasedOnStyle: LLVM
 AlignConsecutiveMacros: Consecutive
+AlignOperands: AlignAfterOperator
+BreakBeforeBinaryOperators: NonAssignment
 ColumnLimit: 0
 IndentWidth: 4
 TabWidth: 4

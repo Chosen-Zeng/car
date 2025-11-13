@@ -1,4 +1,6 @@
+#include "stm32f103xb.h"
 #include "usr.h"
+#include <math.h>
 
 void SysTick_Handler(void) {
     ++task_cnt_ms_State;

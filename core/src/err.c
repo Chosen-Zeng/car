@@ -1,3 +1,4 @@
+#include "stm32f103xb.h"
 #include "usr.h"
 
 #define Err_LED_PORT GPIOC
