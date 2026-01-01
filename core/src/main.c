@@ -71,12 +71,12 @@ int mian(void) {
         GPIOC->ODR |= GPIO_ODR_ODR13;
 
         // output push-pull
-        GPIOA->CRH = (GPIOA->CRH & ~(GPIO_CRH_CNF15 | GPIO_CRH_MODE15 | GPIO_CRH_CNF12 | GPIO_CRH_MODE12 | GPIO_CRH_CNF11 | GPIO_CRH_MODE11 | GPIO_CRH_CNF8 | GPIO_CRH_MODE8))
-                   | (GPIO_CRH_MODE15_1 | GPIO_CRH_MODE12_1 | GPIO_CRH_MODE11_1 | GPIO_CRH_MODE8_1);
+        GPIOA->CRH = (GPIOA->CRH & ~(GPIO_CRH_CNF15 | GPIO_CRH_MODE15 | GPIO_CRH_CNF8 | GPIO_CRH_MODE8))
+                   | (GPIO_CRH_MODE15_1 | GPIO_CRH_MODE8_1);
         GPIOB->CRL = (GPIOB->CRL & ~(GPIO_CRL_CNF5 | GPIO_CRL_MODE5 | GPIO_CRL_CNF4 | GPIO_CRL_MODE4 | GPIO_CRL_CNF3 | GPIO_CRL_MODE3))
                    | GPIO_CRL_MODE5_1 | GPIO_CRL_MODE4_1 | GPIO_CRL_MODE3_1;
-        GPIOB->CRH = (GPIOB->CRH & ~(GPIO_CRH_CNF15 | GPIO_CRH_MODE15))
-                   | GPIO_CRH_MODE15_1;
+        GPIOB->CRH = (GPIOB->CRH & ~(GPIO_CRH_CNF15 | GPIO_CRH_MODE15 | GPIO_CRH_CNF14 | GPIO_CRH_MODE14 | GPIO_CRH_CNF13 | GPIO_CRH_MODE13))
+                   | GPIO_CRH_MODE15_1 | GPIO_CRH_MODE14_1 | GPIO_CRH_MODE13_1;
         GPIOC->CRH = (GPIOC->CRH & ~(GPIO_CRH_CNF13 | GPIO_CRH_MODE13))
                    | GPIO_CRH_MODE13_1;
 
@@ -94,13 +94,13 @@ int mian(void) {
 
         // USART1 RX, alternate function output push-pull
         GPIOA->CRH = (GPIOA->CRH & ~(GPIO_CRH_CNF10 | GPIO_CRH_MODE10))
-                   | GPIO_CRH_CNF10_1 | GPIO_CRH_MODE10_1| GPIO_CRH_MODE10_0;
+                   | GPIO_CRH_CNF10_1 | GPIO_CRH_MODE10_1 | GPIO_CRH_MODE10_0;
 
         // analog mode
         GPIOA->CRL &= ~(GPIO_CRL_CNF5 | GPIO_CRL_CNF4 | GPIO_CRL_CNF3 | GPIO_CRL_CNF2 | GPIO_CRL_CNF1 | GPIO_CRL_CNF0);
         GPIOA->CRH &= ~GPIO_CRH_CNF9;
         GPIOB->CRL &= ~GPIO_CRL_CNF2;
-        GPIOB->CRH &= ~(GPIO_CRH_CNF14 | GPIO_CRH_CNF13 | GPIO_CRH_CNF12 | GPIO_CRH_CNF11 | GPIO_CRH_CNF10);
+        GPIOB->CRH &= ~(GPIO_CRH_CNF12 | GPIO_CRH_CNF11 | GPIO_CRH_CNF10);
         GPIOC->CRL &= ~(GPIO_CRL_CNF7 | GPIO_CRL_CNF6 | GPIO_CRL_CNF5 | GPIO_CRL_CNF4 | GPIO_CRL_CNF3 | GPIO_CRL_CNF2 | GPIO_CRL_CNF1 | GPIO_CRL_CNF0);
         GPIOC->CRH &= ~(GPIO_CRH_CNF15 | GPIO_CRH_CNF14 | GPIO_CRH_CNF12 | GPIO_CRH_CNF11 | GPIO_CRH_CNF10 | GPIO_CRH_CNF9 | GPIO_CRH_CNF8);
         GPIOD->CRL &= ~(GPIO_CRL_CNF7 | GPIO_CRL_CNF6 | GPIO_CRL_CNF5 | GPIO_CRL_CNF4 | GPIO_CRL_CNF3 | GPIO_CRL_CNF2 | GPIO_CRL_CNF1 | GPIO_CRL_CNF0);
@@ -165,9 +165,29 @@ int mian(void) {
         USART1->CR1 |= USART_CR1_UE;
     }
 
+    // USB
+    {
+        RCC->APB1ENR |= RCC_APB1ENR_USBEN;
+
+        USB->CNTR &= ~USB_CNTR_PDWN;
+
+        // wait for defined USB transceiver startup time
+        SysTick->LOAD = SystemCoreClock / 1e6;
+        SysTick->VAL = 0;
+        SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
+        while (!(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk))
+            ;
+        SysTick->CTRL = 0;
+
+        USB->CNTR &= ~USB_CNTR_FRES;
+
+        USB->DADDR |= USB_DADDR_EF;
+    }
+
     SysTick_Config(SystemCoreClock / 1000); // 1ms SysTick interrupt
 
     while (1) {
+
         // state
         if (task_cnt_ms_State >= TASK_PERIOD_ms_State) {
             task_cnt_ms_State = 0;

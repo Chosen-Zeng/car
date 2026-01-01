@@ -29,8 +29,8 @@ void State_Chassis(void) {
     } wheel[4] = {
         [WHEEL_LF_arrID] = {.port_P = GPIOB, .pin_P = GPIO_ODR_ODR5, .port_N = GPIOB, .pin_N = GPIO_ODR_ODR4, .channel = &TIM_CHASSIS->CCR1},
         [WHEEL_RF_arrID] = {.port_P = GPIOB, .pin_P = GPIO_ODR_ODR3, .port_N = GPIOA, .pin_N = GPIO_ODR_ODR15, .channel = &TIM_CHASSIS->CCR2},
-        [WHEEL_RR_arrID] = {.port_P = GPIOA, .pin_P = GPIO_ODR_ODR12, .port_N = GPIOA, .pin_N = GPIO_ODR_ODR11, .channel = &TIM_CHASSIS->CCR3},
-        [WHEEL_LR_arrID] = {.port_P = GPIOA, .pin_P = GPIO_ODR_ODR8, .port_N = GPIOB, .pin_N = GPIO_ODR_ODR15, .channel = &TIM_CHASSIS->CCR4},
+        [WHEEL_RR_arrID] = {.port_P = GPIOA, .pin_P = GPIO_ODR_ODR8, .port_N = GPIOB, .pin_N = GPIO_ODR_ODR15, .channel = &TIM_CHASSIS->CCR3},
+        [WHEEL_LR_arrID] = {.port_P = GPIOB, .pin_P = GPIO_ODR_ODR14, .port_N = GPIOB, .pin_N = GPIO_ODR_ODR13, .channel = &TIM_CHASSIS->CCR4},
     };
 
     static struct spd_t {
@@ -122,13 +122,10 @@ void State_Chassis(void) {
 
 #define ROBOTICARM_SEARCH_PERIOD 8
 
-#define GIMBAL_Kp 0
-#define GIMBAL_Ki 0
-
 #define ROBOTICARM_FETCH_HEIGHT 1
 
-#define JOINT_ANGLE_CLAMP   1
-#define JOINT_ANGLE_UNCLAMP 1
+#define JOINT_ANGLE_CLAMP   210
+#define JOINT_ANGLE_UNCLAMP 270
 
 #define JOINT_CLAMP_HEIGHT_cm 1
 
@@ -151,8 +148,8 @@ void SetJointAngle(const float joint_angle_preset[4]) {
 }
 
 void State_RoboticArm(void) {
-    static const float joint_angle_preset_idle[4] = {0, 0, 0, 0},
-                       joint_angle_preset_place[4] = {0, 0, 0, 0};
+    static const float joint_angle_preset_idle[4] = {0, 0, 45, JOINT_ANGLE_UNCLAMP},
+                       joint_angle_preset_place[4] = {0, 0, 0, JOINT_ANGLE_CLAMP};
 
     static enum state_t state_last_roboticarm;
 
