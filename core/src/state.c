@@ -5,7 +5,7 @@
 #include "algorithm.h"
 #include <math.h>
 
-#define CAR_HEIGHT_cm 0
+#define TBD 0
 
 #define TIM_CHASSIS    TIM4
 #define WHEEL_LF_arrID 0
@@ -13,8 +13,8 @@
 #define WHEEL_RR_arrID 2
 #define WHEEL_LR_arrID 3
 
-#define REACH_DIST_CM     10
-#define REACH_DEADBAND_CM 2
+#define REACH_DIST_CM     TBD
+#define REACH_DEADBAND_CM TBD
 
 void State_Chassis(void) {
     static enum state_t state_last_chassis;
@@ -120,36 +120,34 @@ void State_Chassis(void) {
 
 #define TIM_ROBOTICARM TIM3
 
-#define ROBOTICARM_SEARCH_PERIOD 8
-
-#define ROBOTICARM_FETCH_HEIGHT 1
-
-#define JOINT_ANGLE_CLAMP   210
-#define JOINT_ANGLE_UNCLAMP 270
-
-#define JOINT_CLAMP_HEIGHT_cm 1
+#define ROBOTICARM_HEIGHT_cm  15
+#define ROBOTICARM_FETCH_HEIGHT_cm 5
 
 static struct joint_t {
     volatile unsigned *const channel;
     const float arm_len_cm;
     float angle;
 } joint[4] = {
-    {.channel = &TIM_ROBOTICARM->CCR1},
-    {.channel = &TIM_ROBOTICARM->CCR2},
-    {.channel = &TIM_ROBOTICARM->CCR3},
+    {.channel = &TIM_ROBOTICARM->CCR1, .arm_len_cm = 8.5},
+    {.channel = &TIM_ROBOTICARM->CCR2, .arm_len_cm = 6},
+    {.channel = &TIM_ROBOTICARM->CCR3, .arm_len_cm = 13.5},
     {.channel = &TIM_ROBOTICARM->CCR4},
 };
 
-void SetJointAngle(const float joint_angle_preset[4]) {
-    joint[0].angle = joint_angle_preset[0],
-    joint[1].angle = joint_angle_preset[1],
-    joint[2].angle = joint_angle_preset[2],
-    joint[3].angle = joint_angle_preset[3];
-}
+#define JOINT_ANGLE_CLAMP   30
+#define JOINT_ANGLE_UNCLAMP 90
+
+#define JOINT_ANGLE_PRESET_IDLE_0 -75
+#define JOINT_ANGLE_PRESET_IDLE_1 150
+#define JOINT_ANGLE_PRESET_IDLE_2 -15
+
+#define JOINT_ANGLE_PRESET_PLACE_0 0
+#define JOINT_ANGLE_PRESET_PLACE_1 -45
+#define JOINT_ANGLE_PRESET_PLACE_2 90
 
 void State_RoboticArm(void) {
-    static const float joint_angle_preset_idle[4] = {0, 0, 45, JOINT_ANGLE_UNCLAMP},
-                       joint_angle_preset_place[4] = {0, 0, 0, JOINT_ANGLE_CLAMP};
+
+    static const char joint_angle_offset[4] = {-15, 0, 0, 0};
 
     static enum state_t state_last_roboticarm;
 
@@ -162,7 +160,11 @@ void State_RoboticArm(void) {
             state_last_roboticarm = state_roboticarm;
         }
 
-        SetJointAngle(joint_angle_preset_idle);
+        // set angle
+        joint[0].angle = JOINT_ANGLE_PRESET_IDLE_0 * 2,
+        joint[1].angle = JOINT_ANGLE_PRESET_IDLE_1,
+        joint[2].angle = JOINT_ANGLE_PRESET_IDLE_2,
+        joint[3].angle = JOINT_ANGLE_UNCLAMP;
 
         if (state_W.obj_detect)
             state_roboticarm = FETCH;
@@ -176,21 +178,23 @@ void State_RoboticArm(void) {
             state_last_roboticarm = state_roboticarm;
         }
 
-        // joint other, arm
-        if (obj.dist_cm < 10 && MovAvgFltr_GetStatus(&obj.dist_cm_x_fltr, 1) && MovAvgFltr_GetStatus(&obj.dist_cm_y_fltr, 1)) {
+        if (obj.dist_cm < 10 && MovAvgFltr_GetStatus(&obj.dist_cm_x_fltr, TBD) && MovAvgFltr_GetStatus(&obj.dist_cm_y_fltr, TBD)) {
 
-            float dist_0_2_cm = hypot(joint[2].arm_len_cm + JOINT_CLAMP_HEIGHT_cm - CAR_HEIGHT_cm, obj.dist_cm);
+            float dist_0_2_cm = hypot(joint[2].arm_len_cm + ROBOTICARM_FETCH_HEIGHT_cm - ROBOTICARM_HEIGHT_cm, obj.dist_cm);
 
-            joint[0].angle = (acos(obj.dist_cm / dist_0_2_cm) + acos((pow(dist_0_2_cm, 2) + pow(joint[0].arm_len_cm, 2) - pow(joint[1].arm_len_cm, 2)) / (2 * dist_0_2_cm * joint[0].arm_len_cm))) * R2D;
+            joint[0].angle = (acos(obj.dist_cm / dist_0_2_cm)
+                              + acos((pow(dist_0_2_cm, 2) + pow(joint[0].arm_len_cm, 2) - pow(joint[1].arm_len_cm, 2)) / (2 * dist_0_2_cm * joint[0].arm_len_cm)))
+                           * R2D * 2;
             joint[1].angle = acos((pow(joint[0].arm_len_cm, 2) + pow(joint[1].arm_len_cm, 2) - pow(dist_0_2_cm, 2)) / (2 * joint[0].arm_len_cm * joint[1].arm_len_cm)) * R2D;
-            joint[2].angle = (asin(obj.dist_cm / dist_0_2_cm) + acos((pow(joint[1].arm_len_cm, 2) + pow(dist_0_2_cm, 2) - pow(joint[0].arm_len_cm, 2)) / (2 * joint[1].arm_len_cm * dist_0_2_cm))) * R2D;
+            joint[2].angle = (asin(obj.dist_cm / dist_0_2_cm)
+                              + acos((pow(joint[1].arm_len_cm, 2) + pow(dist_0_2_cm, 2) - pow(joint[0].arm_len_cm, 2)) / (2 * joint[1].arm_len_cm * dist_0_2_cm)))
+                               * R2D
+                           - 180;
+            joint[3].angle = TIMsw_CheckTimeout(&runtime_roboticarm, 3) ? JOINT_ANGLE_CLAMP
+                                                                        : JOINT_ANGLE_UNCLAMP;
 
             if (TIMsw_CheckTimeout(&runtime_roboticarm, 5)) {
                 state_roboticarm = PLACE;
-            } else if (TIMsw_CheckTimeout(&runtime_roboticarm, 3)) {
-                joint[3].angle = JOINT_ANGLE_CLAMP;
-            } else {
-                joint[3].angle = JOINT_ANGLE_UNCLAMP;
             }
         } else
             TIMsw_Clear(&runtime_roboticarm);
@@ -208,12 +212,14 @@ void State_RoboticArm(void) {
             state_last_roboticarm = state_roboticarm;
         }
 
-        SetJointAngle(joint_angle_preset_place);
+        joint[0].angle = JOINT_ANGLE_PRESET_PLACE_0 * 2,
+        joint[1].angle = JOINT_ANGLE_PRESET_PLACE_1,
+        joint[2].angle = JOINT_ANGLE_PRESET_PLACE_2,
+        joint[3].angle = TIMsw_CheckTimeout(&runtime_roboticarm, 3) ? JOINT_ANGLE_UNCLAMP
+                                                                    : JOINT_ANGLE_CLAMP;
 
         if (TIMsw_CheckTimeout(&runtime_roboticarm, 5)) {
             state_roboticarm = IDLE;
-        } else if (TIMsw_CheckTimeout(&runtime_roboticarm, 3)) {
-            joint[3].angle = JOINT_ANGLE_UNCLAMP;
         }
 
         break;
@@ -223,6 +229,6 @@ void State_RoboticArm(void) {
     // control
     {
         for (unsigned char cnt = 0; cnt < 4; ++cnt)
-            *joint[cnt].channel = (TIM_ROBOTICARM->ARR + 1) * (joint[cnt].angle / 360 / 10 + 0.025);
+            *joint[cnt].channel = (TIM_ROBOTICARM->ARR + 1) * ((joint[cnt].angle + joint_angle_offset[cnt] + 180) / 360 / 10 + 0.025);
     }
 }

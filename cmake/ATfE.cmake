@@ -15,7 +15,7 @@ set(CMAKE_EXECUTABLE_SUFFIX_C       ".elf")
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 # MCU specific flags
-set(TARGET_FLAGS "--target=thumbv7m-unknown-none-eabi -mfpu=none -fno-exceptions -fno-rtti -munaligned-access -march=armv7-m -mcpu=cortex-m3 -mthumb -fshort-enums -fno-math-errno")
+set(TARGET_FLAGS "--target=thumbv7m-unknown-none-eabi -mfpu=none -fno-exceptions -fno-rtti -munaligned-access -march=armv7-m -mcpu=cortex-m3 -mthumb -fshort-enums -fno-math-errno -fsigned-char")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${TARGET_FLAGS}")
 set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS} -MP")
