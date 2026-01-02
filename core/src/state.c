@@ -62,14 +62,16 @@ void State_Chassis(void) {
             state_last_chassis = state_chassis;
         }
 
-        spd_pct.y = spd_pct.x = 0;
-        spd_pct.z = 0.1;
+        if (state_W.obj_detect) {
+            state_chassis = REACH;
+            break;
+        }
 
-        if (TIMsw_CheckTimeout(&runtime_chassis, 10))
+        if (TIMsw_CheckTimeout(&runtime_chassis, 3))
             state_chassis = IDLE;
 
-        if (state_W.obj_detect)
-            state_chassis = REACH;
+        spd_pct.y = spd_pct.x = 0;
+        spd_pct.z = 0.2;
 
         break;
     }
@@ -79,12 +81,14 @@ void State_Chassis(void) {
             state_last_chassis = state_chassis;
         }
 
+        if (!state_W.obj_detect) {
+            state_chassis = SEARCH;
+            break;
+        }
+
         spd_pct.x = (MovAvgFltr_GetData(&obj.dist_cm_x_fltr) - REACH_DIST_CM) * 0.1;
         spd_pct.y = MovAvgFltr_GetData(&obj.dist_cm_y_fltr) * 0.1;
         spd_pct.z = -MovAvgFltr_GetData(&obj.dist_cm_x_fltr) * 0.1;
-
-        if (!state_W.obj_detect)
-            state_chassis = SEARCH;
 
         break;
     }
@@ -120,8 +124,8 @@ void State_Chassis(void) {
 
 #define TIM_ROBOTICARM TIM3
 
-#define ROBOTICARM_HEIGHT_cm  15
-#define ROBOTICARM_FETCH_HEIGHT_cm 5
+#define ROBOTICARM_HEIGHT_cm       15
+#define ROBOTICARM_FETCH_HEIGHT_cm 2.5
 
 static struct joint_t {
     volatile unsigned *const channel;
@@ -134,7 +138,7 @@ static struct joint_t {
     {.channel = &TIM_ROBOTICARM->CCR4},
 };
 
-#define JOINT_ANGLE_CLAMP   30
+#define JOINT_ANGLE_CLAMP   20
 #define JOINT_ANGLE_UNCLAMP 90
 
 #define JOINT_ANGLE_PRESET_IDLE_0 -75
@@ -178,6 +182,11 @@ void State_RoboticArm(void) {
             state_last_roboticarm = state_roboticarm;
         }
 
+        if (!state_W.obj_detect) {
+            state_roboticarm = IDLE;
+            break;
+        }
+
         if (obj.dist_cm < 10 && MovAvgFltr_GetStatus(&obj.dist_cm_x_fltr, TBD) && MovAvgFltr_GetStatus(&obj.dist_cm_y_fltr, TBD)) {
 
             float dist_0_2_cm = hypot(joint[2].arm_len_cm + ROBOTICARM_FETCH_HEIGHT_cm - ROBOTICARM_HEIGHT_cm, obj.dist_cm);
@@ -190,17 +199,14 @@ void State_RoboticArm(void) {
                               + acos((pow(joint[1].arm_len_cm, 2) + pow(dist_0_2_cm, 2) - pow(joint[0].arm_len_cm, 2)) / (2 * joint[1].arm_len_cm * dist_0_2_cm)))
                                * R2D
                            - 180;
-            joint[3].angle = TIMsw_CheckTimeout(&runtime_roboticarm, 3) ? JOINT_ANGLE_CLAMP
-                                                                        : JOINT_ANGLE_UNCLAMP;
+            joint[3].angle = TIMsw_CheckTimeout(&runtime_roboticarm, 1.5) ? JOINT_ANGLE_CLAMP
+                                                                          : JOINT_ANGLE_UNCLAMP;
 
-            if (TIMsw_CheckTimeout(&runtime_roboticarm, 5)) {
+            if (TIMsw_CheckTimeout(&runtime_roboticarm, 3)) {
                 state_roboticarm = PLACE;
             }
         } else
             TIMsw_Clear(&runtime_roboticarm);
-
-        if (!state_W.obj_detect)
-            state_roboticarm = IDLE;
 
         break;
     }
@@ -215,10 +221,10 @@ void State_RoboticArm(void) {
         joint[0].angle = JOINT_ANGLE_PRESET_PLACE_0 * 2,
         joint[1].angle = JOINT_ANGLE_PRESET_PLACE_1,
         joint[2].angle = JOINT_ANGLE_PRESET_PLACE_2,
-        joint[3].angle = TIMsw_CheckTimeout(&runtime_roboticarm, 3) ? JOINT_ANGLE_UNCLAMP
-                                                                    : JOINT_ANGLE_CLAMP;
+        joint[3].angle = TIMsw_CheckTimeout(&runtime_roboticarm, 1.5) ? JOINT_ANGLE_UNCLAMP
+                                                                      : JOINT_ANGLE_CLAMP;
 
-        if (TIMsw_CheckTimeout(&runtime_roboticarm, 5)) {
+        if (TIMsw_CheckTimeout(&runtime_roboticarm, 3)) {
             state_roboticarm = IDLE;
         }
 

@@ -184,6 +184,17 @@ int mian(void) {
         USB->DADDR |= USB_DADDR_EF;
     }
 
+    // timeout after power on
+    SysTick->LOAD = SystemCoreClock / 1000;
+    SysTick->VAL = 0;
+    SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
+    for (unsigned short cnt_ms = 3000; cnt_ms; --cnt_ms) {
+        while (!(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk))
+            ;
+        SysTick->CTRL &= ~SysTick_CTRL_COUNTFLAG_Msk;
+    }
+    SysTick->CTRL = 0;
+
     SysTick_Config(SystemCoreClock / 1000); // 1ms SysTick interrupt
 
     while (1) {
